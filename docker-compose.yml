@@ -1,0 +1,40 @@
+# docker-compose.yml for gitlab
+version: '3'
+
+services:
+    gitlab:
+        container_name: dc-gitlab
+        image: gitlab/gitlab-ee:latest
+        restart: always
+        hostname: dc-gitlab
+        environment:
+            GITLAB_OMNIBUS_CONFIG: |
+                external_url 'http://domain.local:11080'
+        networks:
+            - dc-network
+        ports:
+            #- '11080:80'
+            #- '11443:443'
+            #- '11022:22'
+            #- '80:80'
+            #- '443:443'
+            #- '11022:22'
+            - '11080:11080'
+        volumes:
+            - ./config:/etc/gitlab
+            - ./logs:/var/log/gitlab
+            - ./data:/var/opt/gitlab
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "5"
+
+
+networks:
+    dc-network:
+        name: dc-network
+        ipam:
+            driver: default
+            #config:
+            #    - subnet: 172.16.1.0/24
